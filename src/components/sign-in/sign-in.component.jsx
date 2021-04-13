@@ -1,60 +1,51 @@
-import React from "react";
+import React , {useState} from "react";
 import CustomButton from "../custom-button/custom-button.component";
 import Forminput from "../form-input/from-input.component";
 import {auth , signInWithGoogle} from '../../firebase/firebase.utils';
 
 import "./sign-in.styles.scss";
 
-class SignIn extends React.Component {
-  constructor(props) {
-    super(props);
+const SignIn = () => {
 
-    this.state = {
-      email: "",
-      password: "",
-    };
-  }
+  const [userCredential , setCredential] = useState({email:'',password:''});
+  const {email,password} = userCredential;
 
-  handleSubmit = async event => {
+  const handleSubmit = async event => {
     event.preventDefault();
-
-    const { email , password } = this.state;
-
     try{
     await auth.signInWithEmailAndPassword(email , password);
-    this.setState({ email: "", password: "" });
+    setCredential({ email: "", password: "" });
     }catch(error){
       alert(error);
-      this.setState({ email: "", password: "" });
+      setCredential({ email: "", password: "" });
     }
   };
 
-  handleChange = (event) => {
+  const handleChange = (event) => {
     const { value, name } = event.target;
 
-    this.setState({ [name]: value });
+    setCredential({...userCredential,[name]: value });
   };
 
-  render() {
     return (
       <div className="sign-in">
         <h2>I already have an account</h2>
         <span>sign in with your email and password</span>
-        <form onSubmit={this.handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <Forminput
             name="email"
             type="email"
-            handleChange={this.handleChange}
+            handleChange={handleChange}
             label="Email"
-            value={this.state.email}
+            value={email}
             required
           />
           <Forminput
             name="password"
             type="password"
-            handleChange={this.handleChange}
+            handleChange={handleChange}
             label="password"
-            value={this.state.password}
+            value={password}
             required
           />
           <div className='buttons'>
@@ -66,6 +57,6 @@ class SignIn extends React.Component {
       </div>
     );
   }
-}
+
 
 export default SignIn;
